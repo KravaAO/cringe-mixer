@@ -20,6 +20,7 @@ class Singer:
         self.idle_frames = [IDLE_1_IMG, IDLE_2_IMG]
         self.singing_frames = [SINGING_1_IMG, SINGING_2_IMG, SINGING_3_IMG]
         self.current_img = 0
+        self.volume = 0
 
     def reset(self, is_singing=False):
         if self.wait == 0:
@@ -50,7 +51,7 @@ class Singer:
 
     def start_singing(self):
         if self.sound:
-            self.sound.set_volume(0.1)
+            self.sound.set_volume(self.volume)
             self.sound.play(-1)
 
     def stop_singing(self):

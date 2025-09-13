@@ -1,12 +1,13 @@
 from config import *
-from Button import Button
+from ui.Button import Button
 from singer import Singer
+from ui.slider import Slider
 
 buttons = [
-    Button((50,  700), (50, 50), sound_path='assets/sounds/sound_1.wav'),
-    Button((150, 700), (50, 50), sound_path='assets/sounds/sound_2.wav'),
-    Button((250, 700), (50, 50), sound_path='assets/sounds/sound_3.wav'),
-    Button((350, 700), (50, 50), sound_path='assets/sounds/mutant_frog-1.ogg'),
+    Button((150,  600), btn_size, sound_path='assets/sounds/sound_1.wav', img_path='assets/images/ui/short_sound_btn.png', img_size=btn_size),
+    Button((260, 600), btn_size, sound_path='assets/sounds/sound_2.wav', img_path='assets/images/ui/short_sound_btn.png', img_size=btn_size),
+    Button((380, 600), btn_size, sound_path='assets/sounds/sound_3.wav', img_path='assets/images/ui/long_sound_btn.png', img_size=btn_size),
+    Button((500, 600), btn_size, sound_path='assets/sounds/mutant_frog-1.ogg', img_path='assets/images/ui/short_sound_btn.png', img_size=btn_size),
 ]
 
 singers = [
@@ -15,6 +16,19 @@ singers = [
     Singer((600,  390)),
     Singer((800,  390)),
 ]
+
+
+def set_volume(value):
+    global singing, sound_play
+    for s in singers:
+        s.stop_singing()
+        s.volume = value / 100.0
+    play_btn.img = PLAY_BUTTON_IMG
+    singing, sound_play = False, False
+
+
+volume_slider = Slider(20, 20, 200, 0, 100, 1)
+volume_slider.set_on_change(set_volume)
 
 play_btn = Button((550, 200), PLAY_STOP_BTN_SIZE, img_path=PLAY_BUTTON_PATH, img_size=PLAY_STOP_BTN_SIZE)
 running = True
@@ -35,7 +49,6 @@ while running:
                     if not singer.sound:
                         singer.sound = mixer.Sound(sound_path)
                         singer.color = 'blue'
-                        print('присвохди мелодію', sound_path)
                         sound_path = None
             if play_btn.click(e.pos):
                 singing = True
@@ -46,9 +59,11 @@ while running:
                 else:
                     sound_play = False
                     play_btn.img = PLAY_BUTTON_IMG
+        volume_slider.handle_event(e)
 
     window.fill((100, 100, 100))
     window.blit(BG_IMG, (0, 0))
+    volume_slider.draw(window)
     for btn in buttons:
         btn.reset()
     for singer in singers:
